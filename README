@@ -1,0 +1,46 @@
+.------------------------------------------------------------
+| TableStorageAppender for log4net
+|
+| Author: 		Martijn Stolk - http://martijnstolk.blogspot.com
+| Date: 		February 4th, 2013
+| Version: 		0.1
+| License:		BSD
+}-------------------------------------
+| An appender for log4net that helps you log to an Azure Storage Table. This appender
+| can be used as a generic solution for Azure Websites, Azure Webroles and Azure
+| Workerroles or even any desktop application for which you want the logs to end
+| up in a storage account.
+|
+| The format in which the messages are saved is compatible with the existing Windows
+| Azure Diagnostics (wad) format. Hence any applications that makes use of this will
+| function with this appender as well.
+|
+| For now the appender must be configured via code. Configuration via an app/web/log4net.config
+| file is not (yet) supported.
+|
+| Example configuration:
+|	var credentials = new StorageCredentialsAccountAndKey(storageName, storageKey)
+|	var appender = new TableStorageAppender(credentials)
+|	{
+|		Layout = layout,
+|		Threshold = Level.Debug,
+|		Name = "TableStorageAppender",
+|		TransferIntervalInMinutes = 1,
+|		LogmarkerIntervalInMinutes = 15
+|	};
+|	appender.ActivateOptions();
+|
+|	// Configure hierarchy
+|	Hierarchy hierarchy = LogManager.GetRepository() as Hierarchy;
+|	hierarchy.Root.AddAppender(appender);
+|
+| Or, using the helper which allows for some degree of configuration:
+|	// Initializes logging from configuration. The NameValueCollection will read the following properties:
+|	//  - LogType: TableStorage or File
+|	//  - LogStorageName: account name for the storage account
+|	//  - LogStorageKey: key for the storage account
+|	//  - LogStorageTable: optional, customize the table to log to
+|	//  - LogFile: Filename to log to
+|	LoggingHelper.InitializeFromConfiguration(ConfigurationManager.AppSettings);
+|
+`-------------------
