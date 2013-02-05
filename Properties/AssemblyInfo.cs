@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Ms.Azure.Logging")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Logging library for Azure - contains a TableStorageAppender for use with log4net")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Martijn Stolk")]
 [assembly: AssemblyProduct("Ms.Azure.Logging")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
