@@ -1,10 +1,12 @@
 .------------------------------------------------------------
 | TableStorageAppender for log4net
 |
-| Author:         Martijn Stolk - http://martijnstolk.blogspot.com
-| Date:         February 4th, 2013
-| Version:         1.0
-| License:        BSD
+| Author:         Martijn Stolk
+| Website:        http://martijnstolk.blogspot.com
+| Date:           February 6th, 2013
+| Version:        1.0
+| License:        Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+|                 http://creativecommons.org/licenses/by/3.0/
 }-------------------------------------
 | An appender for log4net that helps you log to an Azure Storage Table. This appender
 | can be used as a generic solution for Azure Websites, Azure Webroles and Azure

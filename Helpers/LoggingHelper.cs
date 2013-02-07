@@ -1,4 +1,9 @@
-﻿using System.Collections.Specialized;
+﻿///
+/// Copyright (c) 2013, Martijn Stolk
+/// This work is available under the Creative Commons Attribution 3.0 Unported (CC BY 3.0) license:
+/// http://creativecommons.org/licenses/by/3.0/
+///
+using System.Collections.Specialized;
 using System.IO;
 using Microsoft.WindowsAzure;
 using log4net;
