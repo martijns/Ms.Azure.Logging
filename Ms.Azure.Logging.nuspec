@@ -13,5 +13,11 @@
     <releaseNotes>Initial release.</releaseNotes>
     <copyright>Copyright 2013</copyright>
     <tags>Azure Logging TableStorage Appender Website Webrole Workerrole</tags>
+    <dependencies>
+        <dependency id="log4net" version="1.2.10" />
+    </dependencies>
+	<frameworkAssemblies>
+		<frameworkAssembly assemblyName="System.Configuration" targetFramework="net40" />
+	</frameworkAssemblies>
   </metadata>
 </package>
