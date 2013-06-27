@@ -12,6 +12,7 @@ using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using Ms.Azure.Logging.Appenders;
+using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace Ms.Azure.Logging.Helpers
 {
@@ -60,7 +61,7 @@ namespace Ms.Azure.Logging.Helpers
                 string storageKey = config["LogStorageKey"];
                 string storageTable = config["LogStorageCustomTable"];
                 if (!string.IsNullOrWhiteSpace(storageName) && !string.IsNullOrWhiteSpace(storageKey))
-                    InitializeAzureTableLogging(new StorageCredentialsAccountAndKey(storageName, storageKey), storageTable, DetermineLevel(loglevel));
+                    InitializeAzureTableLogging(new StorageCredentials(storageName, storageKey), storageTable, DetermineLevel(loglevel));
             }
             if (logtype == "File")
             {
@@ -123,7 +124,7 @@ namespace Ms.Azure.Logging.Helpers
         /// <summary>
         /// Initializes log4net with azure table logging.
         /// </summary>
-        public static void InitializeAzureTableLogging(StorageCredentialsAccountAndKey credentials, string customTable = null, Level logLevel = null)
+        public static void InitializeAzureTableLogging(StorageCredentials credentials, string customTable = null, Level logLevel = null)
         {
             // log4net configuration must be done only once
             lock (_logger)

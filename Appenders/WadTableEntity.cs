@@ -4,7 +4,7 @@
 /// http://creativecommons.org/licenses/by/3.0/
 ///
 using System;
-using Microsoft.WindowsAzure.StorageClient;
+using Microsoft.WindowsAzure.Storage.Table.DataServices;
 
 namespace Ms.Azure.Logging.Appenders
 {
@@ -21,7 +21,6 @@ namespace Ms.Azure.Logging.Appenders
             RowKey = string.Format("{0:dd HH:mm:ss.fff}-{1}", now, Guid.NewGuid());
         }
 
-        public DateTime Timestamp { get; set; }
         public long EventTickCount { get; set; }
         public string DeploymentId { get; set; }
         public string Role { get; set; }

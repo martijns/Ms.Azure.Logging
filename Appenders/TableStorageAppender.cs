@@ -9,11 +9,15 @@ using System.Threading;
 using System.Linq;
 using System.Diagnostics;
 using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.StorageClient;
-using Microsoft.WindowsAzure.ServiceRuntime;
 using log4net;
 using log4net.Appender;
 using log4net.Core;
+using Microsoft.WindowsAzure.Storage.Table.DataServices;
+using Microsoft.WindowsAzure.ServiceRuntime;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.RetryPolicies;
 
 namespace Ms.Azure.Logging.Appenders
 {
@@ -33,7 +37,7 @@ namespace Ms.Azure.Logging.Appenders
         /// <summary>
         /// Credentials for the Azure Storage to use
         /// </summary>
-        public StorageCredentialsAccountAndKey StorageCredentials { get; private set; }
+        public StorageCredentials StorageCredentials { get; private set; }
 
         /// <summary>
         /// Table within the Azure Storage to log to. Will be created if it does not exist.
@@ -62,7 +66,7 @@ namespace Ms.Azure.Logging.Appenders
         /// Constructs a new instance of the TableStorageAppender with default settings.
         /// </summary>
         /// <param name="credentials">Azure Storage credentials</param>
-        public TableStorageAppender(StorageCredentialsAccountAndKey credentials)
+        public TableStorageAppender(StorageCredentials credentials)
         {
             StorageCredentials = credentials;
             TableName = "WADLogsTable";
@@ -76,7 +80,7 @@ namespace Ms.Azure.Logging.Appenders
         /// <param name="storageAccountName">Storage account name</param>
         /// <param name="storageAccountKey">Storage account key</param>
         public TableStorageAppender(string storageAccountName, string storageAccountKey)
-            : this(new StorageCredentialsAccountAndKey(storageAccountName, storageAccountKey))
+            : this(new StorageCredentials(storageAccountName, storageAccountKey))
         {
         }
 
@@ -195,9 +199,10 @@ namespace Ms.Azure.Logging.Appenders
                     _logger.Debug("Creating a new TableServiceContext...");
                     CloudStorageAccount storageAccount = new CloudStorageAccount(StorageCredentials, true);
                     CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-                    tableClient.CreateTableIfNotExist(TableName);
-                    context = tableClient.GetDataServiceContext();
-                    context.RetryPolicy = RetryPolicies.Retry(3, TimeSpan.FromMinutes(1));
+                    tableClient.RetryPolicy = new LinearRetry(TimeSpan.FromMinutes(1), 3);
+                    CloudTable table = tableClient.GetTableReference(TableName);
+                    table.CreateIfNotExists();
+                    context = tableClient.GetTableServiceContext();
                 }
 
                 // Clear the queue, add objects to context

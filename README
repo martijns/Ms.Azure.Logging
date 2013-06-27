@@ -3,11 +3,24 @@
 |
 | Author:         Martijn Stolk
 | Website:        http://martijnstolk.blogspot.com
-| Date:           February 6th, 2013
-| Version:        1.0
+| Date:           June 26th, 2013
+| Version:        1.2
 | License:        Creative Commons Attribution 3.0 Unported (CC BY 3.0)
 |                 http://creativecommons.org/licenses/by/3.0/
 }-------------------------------------
+| Changes
+|
+|   v1.2
+|     - Updated to use Azure SDK 2.0
+|     - Added NuGet dependency for WindowsAzure.Storage (v2.0 or higher)
+|
+|   v1.1
+|     - Fixed problem with references
+|
+|   v1.0
+|     - Initial public release
+|
+}-------------------------
 | An appender for log4net that helps you log to an Azure Storage Table. This appender
 | can be used as a generic solution for Azure Websites, Azure Webroles and Azure
 | Workerroles or even any desktop application for which you want the logs to end
@@ -20,8 +33,20 @@
 | For now the appender must be configured via code. Configuration via an 
 | app/web/log4net.config file is not (yet) supported.
 |
-| Example configuration:
-|    var credentials = new StorageCredentialsAccountAndKey(storageName, storageKey)
+| Easiest example:
+|    // At application startup
+|    var credentials = new StorageCredentials(storageName, storageKey);
+|    LoggingHelper.InitializeAzureTableLogging(credentials);
+|
+|    // Just use the logger as you're used to
+|    ILog logger = LogManager.GetLogger("MyLogger");
+|    logger.Info("My Info Logmessage");
+|    
+|    // And at application shutdown to make sure everything is saved before exiting
+|    LoggingHelper.FlushAppenders();
+|
+| Custom log4net configuration:
+|    var credentials = new StorageCredentials(storageName, storageKey);
 |    var appender = new TableStorageAppender(credentials)
 |    {
 |        Layout = layout,
