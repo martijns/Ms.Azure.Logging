@@ -13,6 +13,8 @@ using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using Ms.Azure.Logging.Appenders;
 using Microsoft.WindowsAzure.Storage.Auth;
+using System;
+using Microsoft.WindowsAzure.Storage;
 
 namespace Ms.Azure.Logging.Helpers
 {
@@ -126,6 +128,17 @@ namespace Ms.Azure.Logging.Helpers
         /// </summary>
         public static void InitializeAzureTableLogging(StorageCredentials credentials, string customTable = null, Level logLevel = null)
         {
+            if (credentials.AccountName.StartsWith("devstoreaccount"))
+                InitializeAzureTableLogging(CloudStorageAccount.DevelopmentStorageAccount, customTable, logLevel);
+            else
+                InitializeAzureTableLogging(new CloudStorageAccount(credentials, true), customTable, logLevel);
+        }
+
+        /// <summary>
+        /// Initializes log4net with azure table logging.
+        /// </summary>
+        public static void InitializeAzureTableLogging(CloudStorageAccount storageAccount, string customTable = null, Level logLevel = null)
+        {
             // log4net configuration must be done only once
             lock (_logger)
             {
@@ -139,7 +152,7 @@ namespace Ms.Azure.Logging.Helpers
             layout.ActivateOptions();
 
             // Configure appender
-            TableStorageAppender tsa = new TableStorageAppender(credentials)
+            TableStorageAppender tsa = new TableStorageAppender(storageAccount)
             {
                 Layout = layout,
                 Threshold = Level.Debug,
@@ -156,7 +169,7 @@ namespace Ms.Azure.Logging.Helpers
             hierarchy.Root.AddAppender(tsa);
             hierarchy.Root.Level = logLevel ?? Level.All;
             hierarchy.Configured = true;
-            _logger.Info("Logging to Azure Table Storage has been initialized (accountname=" + credentials.AccountName + ")...");
+            _logger.Info("Logging to Azure Table Storage has been initialized (accountname=" + storageAccount.Credentials.AccountName + ")...");
         }
 
         /// <summary>

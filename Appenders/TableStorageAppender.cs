@@ -35,9 +35,9 @@ namespace Ms.Azure.Logging.Appenders
         private readonly Queue<WadTableEntity> _logEntities = new Queue<WadTableEntity>();
 
         /// <summary>
-        /// Credentials for the Azure Storage to use
+        /// Storage account to use for logging
         /// </summary>
-        public StorageCredentials StorageCredentials { get; private set; }
+        public CloudStorageAccount StorageAccount { get; private set; }
 
         /// <summary>
         /// Table within the Azure Storage to log to. Will be created if it does not exist.
@@ -65,10 +65,10 @@ namespace Ms.Azure.Logging.Appenders
         /// <summary>
         /// Constructs a new instance of the TableStorageAppender with default settings.
         /// </summary>
-        /// <param name="credentials">Azure Storage credentials</param>
-        public TableStorageAppender(StorageCredentials credentials)
+        /// <param name="storageAccount">The storage account to use</param>
+        public TableStorageAppender(CloudStorageAccount storageAccount)
         {
-            StorageCredentials = credentials;
+            StorageAccount = storageAccount;
             TableName = "WADLogsTable";
             TransferIntervalInMinutes = 5;
             LogmarkerIntervalInMinutes = 30;
@@ -77,10 +77,27 @@ namespace Ms.Azure.Logging.Appenders
         /// <summary>
         /// Constructs a new instance of the TableStorageAppender with default settings.
         /// </summary>
-        /// <param name="storageAccountName">Storage account name</param>
-        /// <param name="storageAccountKey">Storage account key</param>
-        public TableStorageAppender(string storageAccountName, string storageAccountKey)
-            : this(new StorageCredentials(storageAccountName, storageAccountKey))
+        /// <param name="credentials">Azure Storage credentials</param>
+        [Obsolete("The constructor is replaced with the one that accepts a CloudStorageAccount parameter. This constructor will be removed in the future.")]
+        public TableStorageAppender(StorageCredentials credentials)
+        {
+            if (credentials.AccountName.StartsWith("devstoreaccount"))
+                StorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+            else
+                StorageAccount = new CloudStorageAccount(credentials, true);
+            TableName = "WADLogsTable";
+            TransferIntervalInMinutes = 5;
+            LogmarkerIntervalInMinutes = 30;
+        }
+
+         /// <summary>
+         /// Constructs a new instance of the TableStorageAppender with default settings.
+         /// </summary>
+         /// <param name="storageAccountName">Storage account name</param>
+         /// <param name="storageAccountKey">Storage account key</param>
+         [Obsolete("The constructor is replaced with the one that accepts a CloudStorageAccount parameter. This constructor will be removed in the future.")]
+         public TableStorageAppender(string storageAccountName, string storageAccountKey)
+             : this(new StorageCredentials(storageAccountName, storageAccountKey))
         {
         }
 
@@ -197,8 +214,7 @@ namespace Ms.Azure.Logging.Appenders
                 {
                     _refreshOptions = false;
                     _logger.Debug("Creating a new TableServiceContext...");
-                    CloudStorageAccount storageAccount = new CloudStorageAccount(StorageCredentials, true);
-                    CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+                    CloudTableClient tableClient = StorageAccount.CreateCloudTableClient();
                     tableClient.RetryPolicy = new LinearRetry(TimeSpan.FromMinutes(1), 3);
                     CloudTable table = tableClient.GetTableReference(TableName);
                     table.CreateIfNotExists();
