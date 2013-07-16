@@ -3,21 +3,26 @@
 |
 | Author:         Martijn Stolk
 | Website:        http://martijnstolk.blogspot.com
-| Date:           June 26th, 2013
-| Version:        1.2
+| Date:           July 2nd, 2013
+| Version:        1.3
 | License:        Creative Commons Attribution 3.0 Unported (CC BY 3.0)
 |                 http://creativecommons.org/licenses/by/3.0/
 }-------------------------------------
 | Changes
 |
-|   v1.2
+|   v1.3 (July 2nd, 2013)
+|     - Add support for CloudStorageAccount
+|     - Add support for DeveloperStorage (when not using CloudStorageAccount), by using
+|       storage account credentials where the username starts with "devstoreaccount"
+|
+|   v1.2 (June 27th, 2013)
 |     - Updated to use Azure SDK 2.0
 |     - Added NuGet dependency for WindowsAzure.Storage (v2.0 or higher)
 |
-|   v1.1
+|   v1.1 (February 8th, 2013)
 |     - Fixed problem with references
 |
-|   v1.0
+|   v1.0 (February 2nd, 2013)
 |     - Initial public release
 |
 }-------------------------
