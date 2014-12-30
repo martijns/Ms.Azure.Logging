@@ -18,6 +18,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
+using System.Text;
 
 namespace Ms.Azure.Logging.Appenders
 {
@@ -153,6 +154,7 @@ namespace Ms.Azure.Logging.Appenders
                 Tid = Thread.CurrentThread.ManagedThreadId,
                 Message = FormatEvent(loggingEvent) + (loggingEvent.ExceptionObject != null ? "\n" + loggingEvent.GetExceptionString() : "")
             };
+            entity.RowKey = AzureDiagnosticsRowKey(entity.DeploymentId, entity.Role, entity.RoleInstance);
 
             // Save the entity for later processing
             lock (_logEntities)
@@ -284,6 +286,23 @@ namespace Ms.Azure.Logging.Appenders
                 // Flush
                 Flush();
             }
+        }
+
+        // From: http://blogs.msdn.com/b/avkashchauhan/archive/2011/06/24/linq-code-to-query-windows-azure-wadlogstable-to-get-rows-which-are-stored-after-a-specific-datetime.aspx
+        private static String AzureDiagnosticsRowKey(String deploymentId = null, String roleName = null, String roleInstanceId = null)
+        {
+            var sb = new StringBuilder();
+            if (!String.IsNullOrWhiteSpace(deploymentId))
+            {
+                sb.Append(deploymentId).Append("___");
+                if (!String.IsNullOrWhiteSpace(roleName))
+                {
+                    sb.Append(roleName).Append("___");
+                    if (!String.IsNullOrWhiteSpace(roleInstanceId))
+                        sb.Append(roleInstanceId);
+                }
+            }
+            return sb.ToString();
         }
     }
 }

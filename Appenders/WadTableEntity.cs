@@ -17,8 +17,8 @@ namespace Ms.Azure.Logging.Appenders
         public WadTableEntity()
         {
             var now = DateTime.UtcNow;
-            PartitionKey = string.Format("{0:yyyy-MM-dd}", now);
-            RowKey = string.Format("{0:dd HH:mm:ss.fff}-{1}", now, Guid.NewGuid());
+            PartitionKey = now.Ticks.ToString("D19"); // Previous format was incompatible with WAD format. We used a yyyy-MM-dd instead of this.
+            RowKey = string.Format("{0:dd HH:mm:ss.fff}-{1}", now, Guid.NewGuid()); // Value updated in TableStorageAppender.cs with a WAD-compatible format.
         }
 
         public long EventTickCount { get; set; }
