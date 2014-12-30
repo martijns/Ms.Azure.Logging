@@ -3,12 +3,18 @@
 |
 | Author:         Martijn Stolk
 | Website:        http://martijnstolk.blogspot.com
-| Date:           July 2nd, 2013
-| Version:        1.3
+| Date:           December 30th, 2014
+| Version:        2.0
 | License:        Creative Commons Attribution 3.0 Unported (CC BY 3.0)
 |                 http://creativecommons.org/licenses/by/3.0/
 }-------------------------------------
 | Changes
+|
+|   v2.0 (December 30th, 2014)
+|     - Support "LogStorageString" for a connection string as alternative to Name/Key
+|     - Updated dependencies to Azure SDK 2.4
+|     - Fix compatibility issue in PartitionKey and RowKey being different from how WAD writes
+|       them, making some tools incompatible.
 |
 |   v1.3 (July 2nd, 2013)
 |     - Add support for CloudStorageAccount
