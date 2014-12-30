@@ -74,6 +74,8 @@
 |    //  - LogStorageKey: key for the storage account
 |    //  - LogStorageTable: optional, customize the table to log to
 |    //  - LogFile: Filename to log to
+|    //  - LogStorageString: use a connection string to indicate storage account and
+|    //    credentials (makes LogStorageName and LogStorageKey obsolete and has preference)
 |    LoggingHelper.InitializeFromConfiguration(ConfigurationManager.AppSettings);
 |
 `-------------------

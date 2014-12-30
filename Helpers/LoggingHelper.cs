@@ -51,6 +51,7 @@ namespace Ms.Azure.Logging.Helpers
         ///  - LogStorageKey: key for the storage account
         ///  - LogStorageTable: optional, customize the table to log to
         ///  - LogFile: Filename to log to
+        ///  - LogStorageString: use a connection string to indicate storage account and credentials (makes LogStorageName and LogStorageKey obsolete and has preference)
         /// </summary>
         /// <param name="config"></param>
         public static void InitializeFromConfiguration(NameValueCollection config)
@@ -61,8 +62,11 @@ namespace Ms.Azure.Logging.Helpers
             {
                 string storageName = config["LogStorageName"];
                 string storageKey = config["LogStorageKey"];
+                string storageString = config["LogStorageString"];
                 string storageTable = config["LogStorageCustomTable"];
-                if (!string.IsNullOrWhiteSpace(storageName) && !string.IsNullOrWhiteSpace(storageKey))
+                if (!string.IsNullOrWhiteSpace(storageString))
+                    InitializeAzureTableLogging(CloudStorageAccount.Parse(storageString), storageTable, DetermineLevel(loglevel));
+                else if (!string.IsNullOrWhiteSpace(storageName) && !string.IsNullOrWhiteSpace(storageKey))
                     InitializeAzureTableLogging(new StorageCredentials(storageName, storageKey), storageTable, DetermineLevel(loglevel));
             }
             if (logtype == "File")
