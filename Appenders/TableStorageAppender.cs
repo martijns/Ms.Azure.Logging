@@ -29,6 +29,7 @@ namespace Ms.Azure.Logging.Appenders
     public class TableStorageAppender : AppenderSkeleton
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(TableStorageAppender));
+        private static long _rowkeyincrement = new Random().Next(int.MaxValue);
 
         /// <summary>
         /// The in-memory store of logentities to be saved to table storage
@@ -302,6 +303,9 @@ namespace Ms.Azure.Logging.Appenders
                         sb.Append(roleInstanceId);
                 }
             }
+            Interlocked.Increment(ref _rowkeyincrement);
+            sb.Append("___").Append(_rowkeyincrement.ToString("D19"));
+            sb.Append("___").Append("WADLogsLocalQuery");
             return sb.ToString();
         }
     }
