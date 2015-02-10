@@ -6,6 +6,7 @@ using Ms.Azure.Logging.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,8 +19,21 @@ namespace Ms.Azure.Logging.TestApp
 
         static void Main(string[] args)
         {
-            LoggingHelper.InitializeAzureTableLogging(CloudStorageAccount.DevelopmentStorageAccount);
-            (LogManager.GetRepository() as Hierarchy).Root.AddAppender(new log4net.Appender.ConsoleAppender { Layout = new PatternLayout("%date %-5level [%-3thread] %logger - %message%newline") });
+
+            bool UseXMLConfigurationFile = false;
+
+            if (UseXMLConfigurationFile)
+            {
+                // Configure Logger from XML Configuration File
+                log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.config"));
+            }
+            else
+            {
+                // Configure Logger Via Code
+                LoggingHelper.InitializeAzureTableLogging(CloudStorageAccount.DevelopmentStorageAccount);
+                (LogManager.GetRepository() as Hierarchy).Root.AddAppender(new log4net.Appender.ConsoleAppender { Layout = new PatternLayout("%date %-5level [%-3thread] %logger - %message%newline") });
+            }
+            
             Logger.Info("Logging initialized");
             for (int i = 1; i <= 10; i++)
             {
