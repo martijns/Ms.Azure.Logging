@@ -2,13 +2,17 @@
 | TableStorageAppender for log4net
 |
 | Author:         Martijn Stolk
+| Contributions:  Neil Burrows
 | Website:        http://martijnstolk.blogspot.com
-| Date:           December 30th, 2014
-| Version:        2.0
+| Date:           February 10th, 2015
+| Version:        2.1
 | License:        Creative Commons Attribution 3.0 Unported (CC BY 3.0)
 |                 http://creativecommons.org/licenses/by/3.0/
 }-------------------------------------
 | Changes
+|
+|   v2.1 (February 10th, 2015)
+|     - Allow configuration of the appender via lognet XML configuration file (by Neil Burrows)
 |
 |   v2.0 (December 30th, 2014)
 |     - Support "LogStorageString" for a connection string as alternative to Name/Key
@@ -41,10 +45,9 @@
 | Azure Diagnostics (wad) format. Hence any applications that makes use of this will
 | function with this appender as well.
 |
-| For now the appender must be configured via code. Configuration via an 
-| app/web/log4net.config file is not (yet) supported.
+| The appender can be configured via code or app/web/log4net.config. An example can
 |
-| Easiest example:
+| Simple code example:
 |    // At application startup
 |    var credentials = new StorageCredentials(storageName, storageKey);
 |    LoggingHelper.InitializeAzureTableLogging(credentials);
@@ -55,6 +58,21 @@
 |    
 |    // And at application shutdown to make sure everything is saved before exiting
 |    LoggingHelper.FlushAppenders();
+|
+| Simple XML example:
+|    <appender name="TestAppender" 
+|              type="Ms.Azure.Logging.Appenders.TableStorageAppender, Ms.Azure.Logging">
+|      <AccountName value="[Storage Name]" />
+|      <AccessKey value="[Access Key]" />
+|      <TableName value="TestTable" />
+|      <layout type="log4net.Layout.PatternLayout">
+|        <conversionPattern 
+|          value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
+|      </layout>
+|    </appender>
+|
+|    Configure in code using:
+|    log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.config"));
 |
 | Custom log4net configuration:
 |    var credentials = new StorageCredentials(storageName, storageKey);
